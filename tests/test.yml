@@ -1,0 +1,5 @@
+---
+- hosts: nomad-servers
+  become: True
+  roles:
+  - role: coffeesprout.nomad

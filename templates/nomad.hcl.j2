@@ -1,0 +1,16 @@
+datacenter = "{{ nomad_datacenter }}"
+data_dir = "{{ nomad_data_dir }}"
+
+{% if 'nomad-servers' in group_names %}
+server {
+  enabled = true
+  bootstrap_expect = {{ groups['nomad-servers'] | length }}
+}
+{% endif %}
+
+
+{% if 'nomad-clients' in group_names %}
+client {
+  enabled = true
+}
+{% endif %}

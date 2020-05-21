@@ -1,0 +1,7 @@
+---
+#Install Nomad from an existing repo; Mostly for FreeBSD since there is no binary on the Hashicorp site yet.
+
+- name: install Nomad from package repository
+  package:
+    name: "{{ nomad_package_name }}"
+    state: present

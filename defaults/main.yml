@@ -1,0 +1,40 @@
+---
+# defaults file for coffeesprout.nomad
+
+nomad_datacenter: "dc1"
+
+download_cache: "~/nomad-downloads"
+#Where to store the nomad downloads
+
+nomad_dependencies:
+- unzip
+#We need to be able to unarchive, which requires the zip binary
+
+nomad_version: "0.11.2"
+#Generally the latest stable version we can find
+
+nomad_arch: "amd64"
+#Default to the AMD64 arch
+
+nomad_system: "{{ ansible_system | lower }}"
+#Will automatically select linux or freebsd
+
+nomad_archive_name: "nomad_{{ nomad_version }}_{{ nomad_system }}_{{ nomad_arch}}.zip"
+#The name of the zip file containing Consul
+
+nomad_download_url: "https://releases.hashicorp.com/nomad/{{ nomad_version }}/{{ nomad_archive_name }}"
+#Where to download Consul
+
+nomad_checksums_url: "sha256:https://releases.hashicorp.com/nomad/{{ nomad_version }}/nomad_{{ nomad_version }}_SHA256SUMS"
+#Where to find the checksums.txt to validate the download
+
+nomad_home: /usr/local/etc/nomad.d
+#The home folder containing the Consul configuration
+
+nomad_data_dir: /opt/nomad
+#The folder containing the nomad data
+
+nomad_retry_join: "{{ groups['nomad-servers']|map('extract', hostvars, ['ansible_default_ipv4','address'] )| list }}"
+#By default we populate the retry_join list with all the server IP's. We assume you are using an internal network to provision Ansible, but feel free to change this variable. Just offer it as a list of IP's
+nomad_client_addr: "127.0.0.1 {{ ansible_all_ipv4_addresses | ipaddr('private') | list | join(' ') }}"
+#Where to bind the client_addr, default to localhost and all private IP's

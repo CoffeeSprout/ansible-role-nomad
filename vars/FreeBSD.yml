@@ -1,0 +1,4 @@
+---
+
+nomad_from_repo: True
+nomad_package_name: nomad

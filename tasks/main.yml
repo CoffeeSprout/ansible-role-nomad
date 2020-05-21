@@ -1,0 +1,84 @@
+---
+# tasks file for coffeesprout.nomad
+
+- name: ensure OS specifics are included
+  include_vars: "{{ item }}"
+  with_first_found:
+  - "{{ ansible_os_family }}.yml"
+
+- name: ensure depedencies are available
+  package:
+    name: "{{ nomad_dependencies }}"
+    state: present
+
+- name: install from Hashicorp
+  include_tasks: install_from_hashicorp.yml
+  when: not nomad_from_repo
+
+- name: install from repository
+  include_tasks: install_from_repo.yml
+  when: nomad_from_repo
+
+- name: ensure Nomad group
+  group:
+    name: "nomad"
+    state: present
+
+- name: ensure Nomad user
+  user:
+    name: "nomad"
+    comment: "Nomad user"
+    group: "nomad"
+    system: true
+    home: "{{ nomad_home }}"
+
+- name: ensure Nomad data directory
+  file:
+    path: "{{ nomad_data_dir }}"
+    state: directory
+    recurse: True
+    owner: nomad
+    group: nomad
+
+- name: ensure systemd unit for Linux
+  template:
+    src: nomad.service.j2
+    dest: /etc/systemd/system/nomad.service
+  register: systemd_unit_created
+  when: "'Linux' in ansible_system"
+
+- name: ensure systemd has loaded the config
+  systemd:
+    daemon_reload: yes
+  when: "systemd_unit_created is changed"
+
+- name: ensure rc.d config for FreeBSD
+  template:
+    src: nomad.rc.j2
+    dest: /usr/local/etc/rc.d/nomad
+    owner: root
+    group: wheel
+    mode: "0555"
+  when: "'FreeBSD' in ansible_system"
+
+- name: ensure Nomad configuration is present
+  template:
+    src: nomad.hcl.j2
+    dest: /usr/local/etc/nomad.d/nomad.hcl
+    owner: nomad
+    group: nomad
+  notify: reload nomad
+
+- name: ensure Nomad service is started for servers
+  service:
+    name: nomad
+    state: started
+  when: "'nomad-servers' in group_names"
+
+#TODO: Build some kind of wait_for to wait on the nomad-servers
+
+- name: ensure Nomad service is started on clients
+  service:
+    name: nomad
+    state: started
+  when: "'nomad-clients' in group_names"

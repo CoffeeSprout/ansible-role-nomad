@@ -1,0 +1,23 @@
+---
+# Download and install Nomad from Hashicorp releases
+
+- name: ensure downloads folder is available
+  file:
+    state: directory
+    recurse: True
+    path: "{{ download_cache }}"
+
+- name: Download the correct version of Nomad
+  get_url:
+    url: "{{ nomad_download_url }}"
+    dest: "{{ download_cache }}"
+    checksum: "{{ nomad_checksums_url }}"
+#See also: https://github.com/ansible/ansible/issues/48790
+
+- name: install Nomad to the path
+  unarchive:
+    remote_src: True
+    src: "{{ download_cache }}/{{ nomad_archive_name }}"
+    dest: /usr/local/bin/
+    owner: root
+    mode: "0755"
