@@ -12,5 +12,10 @@ server {
 {% if 'nomad-clients' in group_names %}
 client {
   enabled = true
+  meta {
+{% for meta in nomad_client_meta %}
+  "{{ meta.name }}" = "{{ meta.value }}"
+{% endfor %}
+  }
 }
 {% endif %}

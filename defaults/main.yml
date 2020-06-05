@@ -29,7 +29,7 @@ nomad_checksums_url: "sha256:https://releases.hashicorp.com/nomad/{{ nomad_versi
 #Where to find the checksums.txt to validate the download
 
 nomad_home: /usr/local/etc/nomad.d
-#The home folder containing the Consul configuration
+#The home folder containing the Nomad configuration
 
 nomad_data_dir: /opt/nomad
 #The folder containing the nomad data
@@ -38,3 +38,9 @@ nomad_retry_join: "{{ groups['nomad-servers']|map('extract', hostvars, ['ansible
 #By default we populate the retry_join list with all the server IP's. We assume you are using an internal network to provision Ansible, but feel free to change this variable. Just offer it as a list of IP's
 nomad_client_addr: "127.0.0.1 {{ ansible_all_ipv4_addresses | ipaddr('private') | list | join(' ') }}"
 #Where to bind the client_addr, default to localhost and all private IP's
+
+nomad_client_meta:
+- name: "name"
+  value: "{{ inventory_hostname }}"
+- name: "groups"
+  value: "{{ group_names | join(',') }}"
