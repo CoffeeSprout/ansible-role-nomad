@@ -1,46 +1,36 @@
 coffeesprout.nomad
 =========
 
-Installs Nomad both for client and server operations. There are other roles out there that do much more, but none of them were simple enough.
-This role uses defaults that work for me and requires just the encryption key.
+The `coffeesprout.nomad` Ansible role installs HashiCorp Nomad, a cluster manager and scheduler, for both client and server operations. This role uses default settings that work for the author, but allows for customization through variables.
 
-Supports both FreeBSD and CentOS 7/8
+This role supports both FreeBSD and CentOS 7/8.
 
 Requirements
 ------------
 
-
+There are no specific requirements for using this role.
 
 Role Variables
 --------------
 
-    nomad_datacenter: "dc1"
+The following variables can be customized:
 
-Nomad datacenter; see https://www.nomad.io/docs/agent/options.html#_datacenter
-
-    download_cache: "~/nomad-downloads"
-
-Where to store the nomad downloads
-
-    nomad_dependencies:
-    - unzip
-
+- `nomad_datacenter`: This variable sets the Nomad datacenter. The default value is `"dc1"`.
+- `download_cache`: This variable sets the directory where Nomad downloads are stored. The default value is `"~/nomad-downloads"`.
+- `nomad_dependencies`: This variable sets a list of dependencies required for Nomad installation. The default value is `["unzip"]`.
 
 Example Playbook
 ----------------
 
-As always with my role, there are a few required settings that you need to specify. Below is the minimum to get this rolling
+Here's an example playbook that uses this role:
 
-    - hosts: nomad-servers:nomad-clients
-      roles:
-      - role: coffeesprout.nomad
-        
-License
--------
+```yaml
+- hosts: nomad-servers:nomad-clients
+  roles:
+    - role: coffeesprout.nomad
+      nomad_datacenter: "mydatacenter"
+      download_cache: "/opt/nomad-downloads"
+      nomad_dependencies:
+        - unzip
+        - curl
 
-BSD
-
-Author Information
-------------------
-
-An optional section for the role authors to include contact information, or a website (HTML is not allowed).
