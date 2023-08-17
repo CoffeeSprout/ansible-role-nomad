@@ -1,6 +1,8 @@
 coffeesprout.nomad
 =========
 
+This role is probably going to be unmaintained as I pivot to Kubernetes.
+
 The `coffeesprout.nomad` Ansible role installs HashiCorp Nomad, a cluster manager and scheduler, for both client and server operations. This role uses default settings that work for the author, but allows for customization through variables.
 
 This role supports both FreeBSD and CentOS 7/8.
